@@ -161,4 +161,4 @@ if owgw_addr == "":
     raise Exception("Failed to discover OWGW address from OWSEC")
 
 if __name__ == "__main__":
-    pass #mcp.run(transport="stdio") # Use "stdio" for testing, "sse" for server-sent events
+    mcp.run(transport="sse") # Use "stdio" for testing, "sse" for server-sent events
