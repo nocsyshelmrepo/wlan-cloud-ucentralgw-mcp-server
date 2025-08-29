@@ -1,0 +1,6 @@
+
+uvicorn>=0.15.0
+mcp
+requests
+pyyaml
+fastapi

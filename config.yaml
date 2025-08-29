@@ -1,0 +1,8 @@
+
+owsec_addr: "openwifi.wlan.local:16001"
+owsec_user: "tip@ucentral.com"
+owsec_password: "Open@Wifi1"
+owgw_addr: ""  #"openwifi.wlan.local:16002"
+
+log_file: "./mcp.log"  # Log file path
+log_level: "DEBUG"   # Log level: DEBUG/INFO/WARNING/ERROR
