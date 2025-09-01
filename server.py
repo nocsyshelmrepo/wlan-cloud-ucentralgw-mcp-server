@@ -45,24 +45,209 @@ def update_owgw_addr(addr: str, user: str, password: str):
         config.owsec_password = old_password
         raise Exception("Failed to discover OWGW address from OWSEC")
 
+
 @mcp.tool()
 def get_systemInfo() -> str:
     """Get OWGW system information."""
     token = loginowsec()
     owgw_addr = getowgw_addr(token)
-    breakpoint()
     try:
         response = requests.get(f"{owgw_addr}/api/v1/system?command=info",
                                 headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
                                 timeout=5, verify=False)
         response.raise_for_status()
-        return response.json()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
+@mcp.tool()
+def get_systemResource() -> str:
+    """Get OWGW system resource usage."""
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/system?command=resources",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
     except requests.RequestException as e:
         raise HTTPException(status_code=response.status_code, detail=str(e))
 
 
+@mcp.tool()
+def get_device(serail: str) -> str:
+    """Get OWGW device information by serial number.
+       Agrs:
+           serail: Device serial number
+    """
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/device/{serail}",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
+@mcp.tool()
+def delete_device(serail: str) -> str:
+    """Get OWGW device information by serial number.
+        Agrs:
+           serail: Device serial number
+    """
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.delete(f"{owgw_addr}/api/v1/device/{serail}",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
+@mcp.tool()
+def get_devicestatus(serail: str) -> str:
+    """Get OWGW device status by serial number.        
+       Agrs:
+           serail: Device serial number
+    """
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/device/{serail}/status",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
+@mcp.tool()
+def get_devicestats(serial: str) -> str:
+    """Get OWGW device stats by serial number.
+        Agrs:
+           serail: Device serial number
+    """
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/device/{serail}/statistics",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e)) 
+
+@mcp.tool()
+def get_healthychecks(serial: str) -> str:
+    """Get OWGW device healthy checks by serial number.
+        Agrs:
+           serail: Device serial number
+    """
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/device/{serail}/healthchecks",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))     
+
+
+@mcp.tool()
+def reboot_device(serial: str) -> str:
+    """Reboot OWGW device by serial number.
+        Agrs:
+           serail: Device serial number
+    """
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/device/{serail}/reboot",
+                                json={"serialNumber": f"{serial}"},
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))     
+
+@mcp.tool()
+def get_capabilities(serial: str) -> str:
+    """Get OWGW capabilities.
+        Agrs:
+           serail: Device serial number
+    """    
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/device/{serial}/capabilities",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
+@mcp.tool()
+def list_devices() -> str:
+    """List OWGW devices."""
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token) 
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/devices",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
+@mcp.tool()
+def get_logs(serial: str) -> str:
+    """Get OWGW device logs by serial number.
+        Agrs:
+           serail: Device serial number
+    """
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/device/{serail}/logs",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
+
+@mcp.tool()
+def get_devicecount() -> str:
+    """Get OWGW device count."""
+    token = loginowsec()
+    owgw_addr = getowgw_addr(token)
+    try:
+        response = requests.get(f"{owgw_addr}/api/v1/devices?countOnly=true",
+                                headers={"Content-Type": "application/json", "Accept": "application/json", "Authorization": f"Bearer {token}"},
+                                timeout=5, verify=False)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        raise HTTPException(status_code=response.status_code, detail=str(e))
+
 def getowgw_addr(token: str) -> str:
-    """Get the OWGW address from restapi."""
+    """Get the OWGW address from restapi.
+        Agrs:
+           token: token get from loginowsec()
+    """
+
     owgw_addr=""
     if config.owgw_addr == "":
         try:
@@ -161,4 +346,4 @@ if owgw_addr == "":
     raise Exception("Failed to discover OWGW address from OWSEC")
 
 if __name__ == "__main__":
-    mcp.run(transport="sse") # Use "stdio" for testing, "sse" for server-sent events
+    mcp.run(transport="sse") # Use "stdio" for testing and mcpo, "sse" for server-sent events
